@@ -114,8 +114,10 @@ export function showSurvey() {
     };
 
     const bio = document.getElementById('bio').value.trim();
-
+console.log('About to update with:', { humorScores, bio, userId: user.uid });
     try {
+
+        
       // Update Firestore profile
       await updateDoc(doc(db, 'users', user.uid), {
         humorScores: humorScores,
