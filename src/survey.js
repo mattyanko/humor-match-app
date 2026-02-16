@@ -1,6 +1,6 @@
 // survey.js
 import { auth, db } from './firebase-config.js';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 export function showSurvey() {
   const app = document.querySelector('#app');
@@ -114,17 +114,15 @@ export function showSurvey() {
     };
 
     const bio = document.getElementById('bio').value.trim();
-console.log('About to update with:', { humorScores, bio, userId: user.uid });
-    try {
-
-        
-      // Update Firestore profile
-      await updateDoc(doc(db, 'users', user.uid), {
-        humorScores: humorScores,
-        bio: bio,
-        isProfileComplete: true,
-        updatedAt: new Date()
-      });
+    console.log('About to update with:', { humorScores, bio, userId: user.uid });
+try {
+  // Update Firestore profile
+  await setDoc(doc(db, 'users', user.uid), {
+    humorScores: humorScores,
+    bio: bio,
+    isProfileComplete: true,
+    updatedAt: new Date()
+  }, { merge: true })
 
       alert('Profile completed! 🎉 Ready to find matches!');
       console.log('Survey saved:', humorScores);
