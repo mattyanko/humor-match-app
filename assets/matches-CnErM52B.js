@@ -1,4 +1,4 @@
-import{f as v,b as y,q as b,w as m,g as S,a as g,e as f}from"./index-uFQ6dlXm.js";function k(o,s){const a=Math.sqrt(Math.pow(o.witty-s.witty,2)+Math.pow(o.dark-s.dark,2)+Math.pow(o.physical-s.physical,2)+Math.pow(o.absurdist-s.absurdist,2)+Math.pow(o.selfDeprecating-s.selfDeprecating,2)),d=Math.sqrt(5*Math.pow(6,2));return Math.round(100-a/d*100)}async function T(o){const s=document.querySelector("#app");s.innerHTML=`
+import{f as v,b as y,q as b,w as m,g as S,a as g,e as f}from"./index-BQp248nT.js";function k(o,s){const a=Math.sqrt(Math.pow(o.witty-s.witty,2)+Math.pow(o.dark-s.dark,2)+Math.pow(o.physical-s.physical,2)+Math.pow(o.absurdist-s.absurdist,2)+Math.pow(o.selfDeprecating-s.selfDeprecating,2)),d=Math.sqrt(5*Math.pow(6,2));return Math.round(100-a/d*100)}async function T(o){const s=document.querySelector("#app");s.innerHTML=`
     <div>
       <h1>Finding Your Matches 🎭</h1>
       <p style="text-align: center; color: #5f6368;">Analyzing humor compatibility...</p>

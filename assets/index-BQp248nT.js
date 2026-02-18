@@ -139,7 +139,7 @@ ${this.customData.serverResponse}`:this.message=this._baseMessage}}var We;(funct
 
 All passwords will be "test123"
 
-Continue?`)){const{createBulkUsers:e}=await to(async()=>{const{createBulkUsers:t}=await import("./bulk-add-users-DTB6G3PB.js");return{createBulkUsers:t}},[]);await e()}})}function qT(n,e){document.querySelector("#app").innerHTML=`
+Continue?`)){const{createBulkUsers:e}=await to(async()=>{const{createBulkUsers:t}=await import("./bulk-add-users-BxqtVVQM.js");return{createBulkUsers:t}},[]);await e()}})}function qT(n,e){document.querySelector("#app").innerHTML=`
     <div>
       <h1>Humor Match 🎭</h1>
       <div id="profile-section" style="text-align: center;">
@@ -157,4 +157,4 @@ Continue?`)){const{createBulkUsers:e}=await to(async()=>{const{createBulkUsers:t
         <button id="logoutBtn">Log Out</button>
       </div>
     </div>
-  `,document.getElementById("retakeSurvey").addEventListener("click",()=>{wd()}),document.getElementById("findMatches").addEventListener("click",async()=>{const{showMatches:t}=await to(async()=>{const{showMatches:r}=await import("./matches-Y6E9crJU.js");return{showMatches:r}},[]);t(e)}),document.getElementById("logoutBtn").addEventListener("click",async()=>{await Al(vn)})}wl(vn,async n=>{if(n){console.log("User logged in:",n.email);const t=(await cT(Bo(Go,"users",n.uid))).data();t&&t.isProfileComplete?qT(n,t):wd()}else console.log("No user logged in"),jT()});export{vn as a,Go as b,yl as c,Bo as d,Al as e,HT as f,GT as g,zT as q,Ed as s,Tl as u,WT as w};
+  `,document.getElementById("retakeSurvey").addEventListener("click",()=>{wd()}),document.getElementById("findMatches").addEventListener("click",async()=>{const{showMatches:t}=await to(async()=>{const{showMatches:r}=await import("./matches-CnErM52B.js");return{showMatches:r}},[]);t(e)}),document.getElementById("logoutBtn").addEventListener("click",async()=>{await Al(vn)})}wl(vn,async n=>{if(n){console.log("User logged in:",n.email);const t=(await cT(Bo(Go,"users",n.uid))).data();t&&t.isProfileComplete?qT(n,t):wd()}else console.log("No user logged in"),jT()});export{vn as a,Go as b,yl as c,Bo as d,Al as e,HT as f,GT as g,zT as q,Ed as s,Tl as u,WT as w};
