@@ -12,12 +12,33 @@
 
 body {
   margin: 0;
-  padding: 20px;
+  padding: 0;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   background: #e3f2fd;
+}
+
+/* Keep white background for login/survey/profile */
+body #app {
+  max-width: 500px;
+  width: 100%;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+/* Remove white background when showing matches */
+body:has(.matches-feed-glass) #app {
+  background: transparent;
+  padding: 0;
+  max-width: 100%;
+  box-shadow: none;
+  border-radius: 0;
+  margin: 0;
 }
 
 #app {
@@ -649,4 +670,200 @@ textarea:focus {
   gap: 12px;
   margin: 20px 0;
   padding: 0 16px;
+}
+
+/* Remove white container ONLY for matches page */
+#app:has(.matches-feed-glass) {
+  background: transparent !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Blue Dot Survey Styles */
+.survey-container-blue {
+  max-width: 100%;
+  width: 100%;
+  background: #e3f2fd;
+  padding: 0;
+  margin: 0;
+}
+
+.survey-header-blue {
+  text-align: center;
+  padding: 30px 20px;
+  background: #e3f2fd;
+}
+
+.survey-header-blue h1 {
+  margin: 0 0 8px 0;
+  color: #1565c0;
+  font-size: 28px;
+}
+
+.survey-subtitle {
+  color: #42a5f5;
+  margin: 0;
+  font-size: 14px;
+}
+
+.survey-cards-blue {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 12px 20px;
+}
+
+.survey-card-blue {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-blue {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e3f2fd;
+}
+
+.emoji-large {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.header-text {
+  flex: 1;
+}
+
+.title-blue {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1565c0;
+  margin-bottom: 4px;
+}
+
+.example-text {
+  font-size: 13px;
+  color: #5f6368;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.slider-labels-blue {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #5f6368;
+  font-weight: 600;
+}
+
+.dots-selector-blue {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.dot-option-blue {
+  flex: 1;
+  aspect-ratio: 1;
+  max-width: 50px;
+  border-radius: 50%;
+  border: 3px solid #e0e0e0;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: #5f6368;
+}
+
+.dot-option-blue:hover {
+  transform: scale(1.1);
+  border-color: #4facfe;
+  background: #f0f9ff;
+}
+
+.dot-option-blue.selected {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-color: #4facfe;
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.5);
+}
+
+.bio-section-blue {
+  background: white;
+  padding: 20px;
+  margin: 0 12px 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bio-section-blue label {
+  display: block;
+  margin-bottom: 12px;
+  color: #1565c0;
+  font-size: 16px;
+}
+
+.optional-text {
+  font-size: 13px;
+  color: #5f6368;
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+.bio-section-blue textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  transition: all 0.2s;
+}
+
+.bio-section-blue textarea:focus {
+  outline: none;
+  border-color: #4facfe;
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+}
+
+.bio-section-blue .char-count {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: #5f6368;
+  margin-top: 8px;
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+  .emoji-large {
+    font-size: 40px;
+  }
+  
+  .title-blue {
+    font-size: 18px;
+  }
+  
+  .example-text {
+    font-size: 12px;
+  }
+  
+  .dot-option-blue {
+    font-size: 14px;
+    border-width: 2px;
+  }
 }
