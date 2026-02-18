@@ -97,7 +97,7 @@ ${this.customData.serverResponse}`:this.message=this._baseMessage}}var We;(funct
             <div class="emoji-large">🤪</div>
             <div class="header-text">
               <div class="title-blue">Physical Humor</div>
-              <div class="example-text">Slapstick, silly faces, pranks, funny videos</div>
+              <div class="example-text">Slapstick, silly faces, pranks</div>
             </div>
           </div>
           <div class="slider-labels-blue">
@@ -202,7 +202,7 @@ ${this.customData.serverResponse}`:this.message=this._baseMessage}}var We;(funct
 
 All passwords will be "test123"
 
-Continue?`)){const{createBulkUsers:e}=await Su(async()=>{const{createBulkUsers:t}=await import("./bulk-add-users-BD0tQ-b0.js");return{createBulkUsers:t}},[]);await e()}})}function qv(n,e){document.querySelector("#app").innerHTML=`
+Continue?`)){const{createBulkUsers:e}=await Su(async()=>{const{createBulkUsers:t}=await import("./bulk-add-users-DncrtmC6.js");return{createBulkUsers:t}},[]);await e()}})}function qv(n,e){document.querySelector("#app").innerHTML=`
     <div>
       <h1>Humor Match 🎭</h1>
       <div id="profile-section" style="text-align: center;">
@@ -220,4 +220,4 @@ Continue?`)){const{createBulkUsers:e}=await Su(async()=>{const{createBulkUsers:t
         <button id="logoutBtn">Log Out</button>
       </div>
     </div>
-  `,document.getElementById("retakeSurvey").addEventListener("click",()=>{od()}),document.getElementById("findMatches").addEventListener("click",async()=>{const{showMatches:t}=await Su(async()=>{const{showMatches:r}=await import("./matches-o3YtzIW0.js");return{showMatches:r}},[]);t(e)}),document.getElementById("logoutBtn").addEventListener("click",async()=>{await Cm(ur)})}Pm(ur,async n=>{if(n){console.log("User logged in:",n.email);const t=(await av(xo(Ho,"users",n.uid))).data();t&&t.isProfileComplete?qv(n,t):od()}else console.log("No user logged in"),Bv()});export{ur as a,Ho as b,Im as c,xo as d,Cm as e,$v as f,Wv as g,Hv as q,nd as s,Rm as u,zv as w};
+  `,document.getElementById("retakeSurvey").addEventListener("click",()=>{od()}),document.getElementById("findMatches").addEventListener("click",async()=>{const{showMatches:t}=await Su(async()=>{const{showMatches:r}=await import("./matches-B5tqDsCe.js");return{showMatches:r}},[]);t(e)}),document.getElementById("logoutBtn").addEventListener("click",async()=>{await Cm(ur)})}Pm(ur,async n=>{if(n){console.log("User logged in:",n.email);const t=(await av(xo(Ho,"users",n.uid))).data();t&&t.isProfileComplete?qv(n,t):od()}else console.log("No user logged in"),Bv()});export{ur as a,Ho as b,Im as c,xo as d,Cm as e,$v as f,Wv as g,Hv as q,nd as s,Rm as u,zv as w};
