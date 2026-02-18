@@ -46,8 +46,18 @@ body:has(.matches-feed-glass) #app {
   width: 100%;
   background: white;
   padding: 40px;
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove white background for matches and survey pages */
+#app:has(.matches-feed-glass),
+#app:has(.survey-container-blue) {
+  background: transparent !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
 h1 {
