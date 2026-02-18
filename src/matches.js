@@ -237,6 +237,7 @@ function displayMatches(matches, currentUserData) {
 }
 
 // Helper function to create score row HTML
+// Helper function to create score row HTML
 function createScoreRow(dimension, yourScores, theirScores) {
   const labels = {
     witty: '😏 Witty',
@@ -278,10 +279,20 @@ function createScoreRow(dimension, yourScores, theirScores) {
   
   return `
     <div class="score-row-glass">
-      <span class="score-label-glass">${labels[dimension.key]}</span>
-      <div class="dots-glass">${yourDots}</div>
-      <div class="dots-glass">${theirDots}</div>
-      <span class="match-quality-glass ${qualityClass}">${qualityText}</span>
+      <div class="score-row-header">
+        <span class="score-label-glass">${labels[dimension.key]}</span>
+        <span class="match-quality-glass ${qualityClass}">${qualityText}</span>
+      </div>
+      <div class="score-dots-container">
+        <div class="dots-row">
+          <div class="dots-label">You</div>
+          <div class="dots-glass">${yourDots}</div>
+        </div>
+        <div class="dots-row">
+          <div class="dots-label">Them</div>
+          <div class="dots-glass">${theirDots}</div>
+        </div>
+      </div>
     </div>
   `;
 }
