@@ -52,7 +52,8 @@ body:has(.matches-feed-glass) #app {
 
 /* Remove white background for matches and survey pages */
 #app:has(.matches-feed-glass),
-#app:has(.survey-container-blue) {
+#app:has(.survey-container-blue),
+#app:has(.image-feed) {
   background: transparent !important;
   padding: 0 !important;
   max-width: 100% !important;
