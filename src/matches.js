@@ -3,7 +3,7 @@ import { auth, db } from './firebase-config.js';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 
-// Calculate Euclidean distance between two users' humor scores
+// Calculate Euclidean distance
 function calculateMatchScore(user1Scores, user2Scores) {
   const distance = Math.sqrt(
     Math.pow(user1Scores.witty - user2Scores.witty, 2) +
@@ -13,29 +13,46 @@ function calculateMatchScore(user1Scores, user2Scores) {
     Math.pow(user1Scores.selfDeprecating - user2Scores.selfDeprecating, 2)
   );
   
-  // Max possible distance is sqrt(5 * 6^2) = ~13.4
   const maxDistance = Math.sqrt(5 * Math.pow(6, 2));
-  
-  // Convert to 0-100 match percentage (lower distance = higher match)
   const matchPercentage = Math.round(100 - (distance / maxDistance * 100));
   
   return matchPercentage;
 }
 
+// Detect "Top Vibe" - their strongest humor type
+function getTopVibe(scores) {
+  const humorTypes = [
+    { key: 'witty', name: 'Witty', emoji: '😏', color: '#4facfe' },
+    { key: 'dark', name: 'Dark', emoji: '🌑', color: '#1f2937' },
+    { key: 'physical', name: 'Physical', emoji: '🤪', color: '#10b981' },
+    { key: 'absurdist', name: 'Absurdist', emoji: '🎨', color: '#f59e0b' },
+    { key: 'selfDeprecating', name: 'Self-Dep', emoji: '😅', color: '#8b5cf6' }
+  ];
+  
+  let topScore = 0;
+  let topType = humorTypes[0];
+  
+  humorTypes.forEach(type => {
+    if (scores[type.key] > topScore) {
+      topScore = scores[type.key];
+      topType = type;
+    }
+  });
+  
+  return topType;
+}
+
 export async function showMatches(currentUserData) {
   const app = document.querySelector('#app');
   
-  // Show loading state
   app.innerHTML = `
-    <div>
-      <h1>Finding Your Matches 🎭</h1>
-      <p style="text-align: center; color: #5f6368;">Analyzing humor compatibility...</p>
-      <div class="loading-spinner"></div>
+    <div style="text-align: center; padding: 40px; background: #e3f2fd;">
+      <h1 style="color: #1565c0;">Finding Your Matches 🎭</h1>
+      <p style="color: #42a5f5;">Analyzing humor compatibility...</p>
     </div>
   `;
   
   try {
-    // Fetch all users from Firestore
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('isProfileComplete', '==', true));
     const querySnapshot = await getDocs(q);
@@ -45,12 +62,8 @@ export async function showMatches(currentUserData) {
     querySnapshot.forEach((doc) => {
       const userData = doc.data();
       
-      // Skip the current user
-      if (userData.userId === auth.currentUser.uid) {
-        return;
-      }
+      if (userData.userId === auth.currentUser.uid) return;
       
-      // Calculate match score
       const matchScore = calculateMatchScore(
         currentUserData.humorScores,
         userData.humorScores
@@ -62,19 +75,16 @@ export async function showMatches(currentUserData) {
       });
     });
     
-    // Sort by match score (highest first)
     allMatches.sort((a, b) => b.matchScore - a.matchScore);
-    
-    // Display matches
     displayMatches(allMatches, currentUserData);
     
   } catch (error) {
     console.error('Error fetching matches:', error);
     app.innerHTML = `
-      <div>
+      <div style="text-align: center; padding: 40px;">
         <h1>Error Loading Matches</h1>
         <p style="color: red;">${error.message}</p>
-        <button id="backToProfile">Back to Profile</button>
+        <button id="backToProfile" class="primary-btn">Back to Profile</button>
       </div>
     `;
     
@@ -89,11 +99,11 @@ function displayMatches(matches, currentUserData) {
   
   if (matches.length === 0) {
     app.innerHTML = `
-      <div>
-        <h1>No Matches Yet 😢</h1>
-        <p style="text-align: center; color: #5f6368;">Be the first! Invite your friends to join.</p>
-        <button id="backToProfile">Back to Profile</button>
-        <button id="logoutBtn">Log Out</button>
+      <div style="text-align: center; padding: 40px; background: #e3f2fd;">
+        <h1 style="color: #1565c0;">No Matches Yet 😢</h1>
+        <p style="color: #42a5f5;">Be the first! Invite your friends to join.</p>
+        <button id="backToProfile" class="primary-btn">Back to Profile</button>
+        <button id="logoutBtn" class="secondary-btn">Log Out</button>
       </div>
     `;
     
@@ -108,102 +118,84 @@ function displayMatches(matches, currentUserData) {
     return;
   }
   
-  // Generate HTML for all match cards
   const matchesHTML = matches.map((match, index) => {
-    // Calculate which dimensions to show in summary (best 2 matches + biggest difference)
-    const dimensions = ['witty', 'dark', 'physical', 'absurdist', 'selfDeprecating'];
-    const scored = dimensions.map(dim => ({
-      key: dim,
-      diff: Math.abs(currentUserData.humorScores[dim] - match.humorScores[dim]),
-      yourScore: currentUserData.humorScores[dim],
-      theirScore: match.humorScores[dim]
-    }));
-    
-    // Sort by difference (ascending for matches, descending for differences)
-    const bestMatches = [...scored].sort((a, b) => a.diff - b.diff).slice(0, 2);
-    const biggestDiff = [...scored].sort((a, b) => b.diff - a.diff)[0];
-    
-    const keyDimensions = [...bestMatches, biggestDiff];
+    const topVibe = getTopVibe(match.humorScores);
+    const photoURL = match.photoURL || '';
+    const hasPhoto = photoURL && photoURL.length > 0;
     
     return `
-      <div class="match-card-glass">
-        <div class="card-header-glass">
-          <div class="header-left">
-            <div class="rank-glass">#${index + 1}</div>
-            <div class="name-glass">${match.displayName}</div>
+      <div class="image-match-card">
+        <!-- Image Section -->
+        <div class="image-section">
+          ${hasPhoto ? `
+            <img src="${photoURL}" alt="${match.displayName}" class="profile-image" />
+          ` : `
+            <div class="profile-image-placeholder">
+              <div class="placeholder-icon">📷</div>
+              <div class="placeholder-text">No Photo</div>
+            </div>
+          `}
+          
+          <div class="image-gradient"></div>
+          
+          <!-- Match Badge -->
+          <div class="match-badge">
+            ✨ ${match.matchScore}% Match
           </div>
-          <div class="match-score-glass">${match.matchScore}% Match</div>
+          
+          <!-- Top Vibe Badge -->
+          <div class="vibe-badge">
+            <span class="vibe-emoji">${topVibe.emoji}</span>
+            <span class="vibe-name">${topVibe.name}</span>
+          </div>
+          
+          <!-- Name & Bio Overlay -->
+          <div class="overlay-info">
+            <div class="name-age">
+              <h2>${match.displayName}${match.age ? `, ${match.age}` : ''}</h2>
+            </div>
+            <p class="bio-text">${match.bio || 'No bio yet'}</p>
+          </div>
         </div>
         
-        <div class="card-content-glass">
-          <div class="profile-section-glass">
-            <div class="photo-placeholder-glass">
-              <div class="photo-icon">📷</div>
-              <div class="photo-text">Photo</div>
-            </div>
-            <div class="bio-glass">${match.bio || 'No bio yet'}</div>
-          </div>
-          
-          <div class="key-matches-glass">
-            <div class="key-matches-title">Top Matches & Differences</div>
-            ${keyDimensions.map(dim => createScoreRow(dim, currentUserData.humorScores, match.humorScores)).join('')}
-          </div>
-          
-          <button class="view-all-btn-glass" onclick="toggleBreakdown('${match.userId}')">
-            <span>View All 5 Humor Dimensions</span>
-            <span class="arrow">▼</span>
+        <!-- Expand Button -->
+        <button class="expand-btn" data-user-id="${match.userId}">
+          <span class="expand-text">Humor Compatibility</span>
+          <span class="expand-arrow">▼</span>
+        </button>
+        
+        <!-- Hidden Breakdown -->
+        <div class="breakdown-section" id="breakdown-${match.userId}">
+          ${createBreakdownHTML(match, currentUserData)}
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="image-actions">
+          <button class="btn-image-pass" data-user-id="${match.userId}">
+            <span>✕</span>
+            <span>Pass</span>
           </button>
-          
-          <div class="full-breakdown-glass" id="breakdown-${match.userId}">
-            <div class="breakdown-content-glass">
-              <div class="breakdown-title">Complete Humor Breakdown</div>
-              
-              ${createScoreRow({key: 'witty', yourScore: currentUserData.humorScores.witty, theirScore: match.humorScores.witty, diff: Math.abs(currentUserData.humorScores.witty - match.humorScores.witty)}, currentUserData.humorScores, match.humorScores)}
-              ${createScoreRow({key: 'dark', yourScore: currentUserData.humorScores.dark, theirScore: match.humorScores.dark, diff: Math.abs(currentUserData.humorScores.dark - match.humorScores.dark)}, currentUserData.humorScores, match.humorScores)}
-              ${createScoreRow({key: 'physical', yourScore: currentUserData.humorScores.physical, theirScore: match.humorScores.physical, diff: Math.abs(currentUserData.humorScores.physical - match.humorScores.physical)}, currentUserData.humorScores, match.humorScores)}
-              ${createScoreRow({key: 'absurdist', yourScore: currentUserData.humorScores.absurdist, theirScore: match.humorScores.absurdist, diff: Math.abs(currentUserData.humorScores.absurdist - match.humorScores.absurdist)}, currentUserData.humorScores, match.humorScores)}
-              ${createScoreRow({key: 'selfDeprecating', yourScore: currentUserData.humorScores.selfDeprecating, theirScore: match.humorScores.selfDeprecating, diff: Math.abs(currentUserData.humorScores.selfDeprecating - match.humorScores.selfDeprecating)}, currentUserData.humorScores, match.humorScores)}
-              
-              <div class="legend-glass">
-                <div class="legend-item">
-                  <div class="legend-dot you-glass"></div>
-                  <span>You</span>
-                </div>
-                <div class="legend-item">
-                  <div class="legend-dot them-glass"></div>
-                  <span>Them</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="actions-glass">
-            <button class="btn-glass btn-pass-glass" data-user-id="${match.userId}">
-              <span>👎</span>
-              <span>Pass</span>
-            </button>
-            <button class="btn-glass btn-like-glass" data-user-id="${match.userId}">
-              <span>❤️</span>
-              <span>Like</span>
-            </button>
-          </div>
+          <button class="btn-image-like" data-user-id="${match.userId}">
+            <span>❤️</span>
+            <span>Like</span>
+          </button>
         </div>
       </div>
     `;
   }).join('');
   
   app.innerHTML = `
-    <div class="matches-feed-glass">
-      <div class="feed-header-glass">
-        <h1>Your Matches 🎭</h1>
-        <p class="feed-subtitle">${matches.length} potential ${matches.length === 1 ? 'match' : 'matches'} found</p>
+    <div class="image-feed">
+      <div class="image-feed-header">
+        <h1>Your Matches 🔥</h1>
+        <p class="feed-count">${matches.length} potential ${matches.length === 1 ? 'match' : 'matches'} found</p>
       </div>
       
-      <div class="feed-cards-glass">
+      <div class="image-cards-container">
         ${matchesHTML}
       </div>
       
-      <div class="feed-footer-glass">
+      <div class="feed-footer">
         <button id="backToProfile" class="secondary-btn">← Back to Profile</button>
         <button id="logoutBtn" class="secondary-btn">Log Out</button>
       </div>
@@ -211,19 +203,24 @@ function displayMatches(matches, currentUserData) {
   `;
   
   // Add event listeners
-  document.querySelectorAll('.btn-like-glass').forEach(btn => {
+  document.querySelectorAll('.expand-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const userId = e.currentTarget.getAttribute('data-user-id');
-      const userName = matches.find(m => m.userId === userId).displayName;
-      handleLike(userId, userName, e.currentTarget);
+      toggleBreakdown(userId, e.currentTarget);
     });
   });
   
-  document.querySelectorAll('.btn-pass-glass').forEach(btn => {
+  document.querySelectorAll('.btn-image-like').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const userId = e.currentTarget.getAttribute('data-user-id');
       const userName = matches.find(m => m.userId === userId).displayName;
-      handlePass(userId, userName, e.currentTarget);
+      handleLike(userId, userName);
+    });
+  });
+  
+  document.querySelectorAll('.btn-image-pass').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      handlePass(e.currentTarget);
     });
   });
   
@@ -236,145 +233,80 @@ function displayMatches(matches, currentUserData) {
   });
 }
 
-// Helper function to create score row HTML
-// Helper function to create score row HTML
-function createScoreRow(dimension, yourScores, theirScores) {
-  const labels = {
-    witty: '😏 Witty',
-    dark: '🌑 Dark',
-    physical: '🤪 Physical',
-    absurdist: '🎨 Absurdist',
-    selfDeprecating: '😅 Self-Dep'
-  };
+function createBreakdownHTML(match, currentUserData) {
+  const humorTypes = [
+    { key: 'witty', name: 'Witty', emoji: '😏' },
+    { key: 'dark', name: 'Dark', emoji: '🌑' },
+    { key: 'physical', name: 'Physical', emoji: '🤪' },
+    { key: 'absurdist', name: 'Absurdist', emoji: '🎨' },
+    { key: 'selfDeprecating', name: 'Self-Dep', emoji: '😅' }
+  ];
   
-  const yourScore = dimension.yourScore;
-  const theirScore = dimension.theirScore;
-  const diff = dimension.diff;
-  
-  let qualityText = 'Different';
-  let qualityClass = 'different';
-  
-  if (diff === 0) {
-    qualityText = 'Perfect ✨';
-    qualityClass = 'perfect';
-  } else if (diff === 1) {
-    qualityText = 'Close 👍';
-    qualityClass = 'close';
-  } else if (diff === 2) {
-    qualityText = 'Similar';
-    qualityClass = 'close';
-  } else if (diff >= 3) {
-    qualityText = 'Different ⚡';
-    qualityClass = 'different';
-  }
-  
-  // Create dots for visualization
-  const yourDots = Array(7).fill(0).map((_, i) => 
-    `<div class="dot-glass ${i < yourScore ? 'filled-you-glass' : ''}"></div>`
-  ).join('');
-  
-  const theirDots = Array(7).fill(0).map((_, i) => 
-    `<div class="dot-glass ${i < theirScore ? 'filled-them-glass' : ''}"></div>`
-  ).join('');
+  const rows = humorTypes.map(type => {
+    const yourScore = currentUserData.humorScores[type.key];
+    const theirScore = match.humorScores[type.key];
+    const diff = Math.abs(yourScore - theirScore);
+    const isMatch = diff <= 1;
+    
+    const yourPercent = (yourScore / 7) * 100;
+    const theirPercent = (theirScore / 7) * 100;
+    
+    return `
+      <div class="breakdown-row">
+        <div class="breakdown-header">
+          <span class="breakdown-label">
+            <span class="breakdown-emoji">${type.emoji}</span>
+            <span>${type.name}</span>
+          </span>
+          ${isMatch ? '<span class="perfect-badge">Perfect Alignment ✨</span>' : ''}
+        </div>
+        <div class="bar-container">
+          <div class="bar-bg"></div>
+          <div class="bar-you" style="width: ${yourPercent}%"></div>
+          <div class="bar-them" style="width: ${theirPercent}%"></div>
+        </div>
+        <div class="bar-labels">
+          <span class="label-you">You: ${yourScore}</span>
+          <span class="label-them">Them: ${theirScore}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
   
   return `
-    <div class="score-row-glass">
-      <div class="score-row-header">
-        <span class="score-label-glass">${labels[dimension.key]}</span>
-        <span class="match-quality-glass ${qualityClass}">${qualityText}</span>
-      </div>
-      <div class="score-dots-container">
-        <div class="dots-row">
-          <div class="dots-label">You</div>
-          <div class="dots-glass">${yourDots}</div>
-        </div>
-        <div class="dots-row">
-          <div class="dots-label">Them</div>
-          <div class="dots-glass">${theirDots}</div>
-        </div>
-      </div>
+    <div class="breakdown-content">
+      <h3 class="breakdown-title">Humor Breakdown</h3>
+      ${rows}
     </div>
   `;
 }
 
-// Global function to toggle breakdown (needs to be accessible from onclick)
-window.toggleBreakdown = function(userId) {
+function toggleBreakdown(userId, button) {
   const breakdown = document.getElementById(`breakdown-${userId}`);
-  const button = event.target.closest('.view-all-btn-glass');
+  const arrow = button.querySelector('.expand-arrow');
+  const text = button.querySelector('.expand-text');
   
-  breakdown.classList.toggle('expanded');
-  button.classList.toggle('expanded');
+  const isExpanded = breakdown.classList.contains('expanded');
   
-  if (breakdown.classList.contains('expanded')) {
-    button.innerHTML = '<span>Hide Full Breakdown</span><span class="arrow">▼</span>';
+  if (isExpanded) {
+    breakdown.classList.remove('expanded');
+    arrow.textContent = '▼';
+    text.textContent = 'Humor Compatibility';
   } else {
-    button.innerHTML = '<span>View All 5 Humor Dimensions</span><span class="arrow">▼</span>';
+    breakdown.classList.add('expanded');
+    arrow.textContent = '▲';
+    text.textContent = 'Hide Details';
   }
-};
-
-// Helper function to get initials from name
-function getInitials(name) {
-  return name
-    .split(' ')
-    .map(word => word[0])
-    .join('')
-    .toUpperCase()
-    .substring(0, 2);
 }
 
-// Helper function to get difference class
-function getDiffClass(score1, score2) {
-  const diff = Math.abs(score1 - score2);
-  if (diff === 0) return 'perfect-match';
-  if (diff === 1) return 'great-match';
-  if (diff <= 2) return 'good-match';
-  return 'ok-match';
-}
-
-// Helper function to get match text
-function getMatchText(score1, score2) {
-  const diff = Math.abs(score1 - score2);
-  if (diff === 0) return '🎯 Perfect!';
-  if (diff === 1) return '✨ Very close';
-  if (diff <= 2) return '👍 Similar';
-  if (diff <= 3) return '~ Different';
-  return '⚡ Opposite';
-}
-
-// Handle like action
-function handleLike(userId, userName, button) {
-  // Disable button
-  button.disabled = true;
-  button.classList.add('liked');
-  button.innerHTML = '<span class="btn-icon">💚</span><span class="btn-text">Liked!</span>';
-  
-  // TODO: Save to Firestore later
+function handleLike(userId, userName) {
+  alert(`You liked ${userName}! 💚\n\n(Saving likes coming soon)`);
   console.log(`Liked: ${userName} (${userId})`);
-  
-  // Show feedback
-  setTimeout(() => {
-    alert(`You liked ${userName}! 💚\n\n(Saving likes to database coming soon)`);
-  }, 300);
 }
 
-// Handle pass action
-function handlePass(userId, userName, button) {
-  // Disable button
-  button.disabled = true;
-  button.classList.add('passed');
-  button.innerHTML = '<span class="btn-icon">👋</span><span class="btn-text">Passed</span>';
-  
-  // TODO: Save to Firestore later
-  console.log(`Passed: ${userName} (${userId})`);
-  
-  // Fade out the card
-  const card = button.closest('.match-card-glass');
+function handlePass(button) {
+  const card = button.closest('.image-match-card');
   card.style.opacity = '0.5';
-}
-
-function getMatchClass(score) {
-  if (score >= 80) return 'excellent-match';
-  if (score >= 60) return 'good-match';
-  if (score >= 40) return 'ok-match';
-  return 'low-match';
+  card.style.pointerEvents = 'none';
+  console.log('Passed on user');
 }
