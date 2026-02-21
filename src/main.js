@@ -147,6 +147,7 @@ function showWelcomeScreen(user, profileData) {
         <button id="findMatches" class="primary-btn">Find Matches 🎯</button>
         <button id="retakeSurvey">Edit Profile</button>
         <button id="updatePhotosBtn" class="secondary-btn">Update User Photos 📸</button>
+        <button id="listUsersBtn" class="secondary-btn">List All Users 📋</button>
         <button id="logoutBtn">Log Out</button>
       </div>
     </div>
@@ -175,6 +176,20 @@ function showWelcomeScreen(user, profileData) {
 
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await signOut(auth);
+  });
+
+  document.getElementById('listUsersBtn').addEventListener('click', async () => {
+    const { collection, getDocs } = await import('firebase/firestore');
+    const usersRef = collection(db, 'users');
+    const snapshot = await getDocs(usersRef);
+    
+    let usersList = 'Current Users:\n\n';
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      usersList += `• ${data.displayName} (${data.userId})\n`;
+    });
+    
+    alert(usersList);
   });
 }
 
