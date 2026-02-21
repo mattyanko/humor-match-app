@@ -146,6 +146,7 @@ function showWelcomeScreen(user, profileData) {
         </div>
         <button id="findMatches" class="primary-btn">Find Matches 🎯</button>
         <button id="retakeSurvey">Edit Profile</button>
+        <button id="updatePhotosBtn" class="secondary-btn">Update User Photos 📸</button>
         <button id="logoutBtn">Log Out</button>
       </div>
     </div>
@@ -158,6 +159,18 @@ function showWelcomeScreen(user, profileData) {
   document.getElementById('findMatches').addEventListener('click', async () => {
     const { showMatches } = await import('./matches.js');
     showMatches(profileData);
+  });
+
+  document.getElementById('updatePhotosBtn').addEventListener('click', async () => {
+    const confirmed = confirm(
+      'This will update all existing users with photos and bios.\n\n' +
+      'Continue?'
+    );
+    
+    if (confirmed) {
+      const { updateUserPhotos } = await import('./update-user-photos.js');
+      await updateUserPhotos();
+    }
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async () => {
