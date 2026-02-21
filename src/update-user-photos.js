@@ -4,64 +4,84 @@ import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const PHOTO_MAP = {
-  'spudz': {
+  'test user': {
     photoURL: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=800',
     bio: 'I like dad jokes and long walks through the condiment aisle. Looking for someone who doesn\'t take life too seriously.',
     age: 27
   },
-  'Witty Will': {
-    displayName: 'Marcus',
-    photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800',
-    bio: 'Professional pun enthusiast. I have a Ph.D. in sarcasm. Let\'s trade bad jokes.',
-    age: 30
-  },
-  'Dark Dana': {
-    displayName: 'Luna',
-    photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800',
-    bio: 'Dark humor is my love language. If you can make me laugh until I feel slightly guilty, we\'ll get along.',
-    age: 24
-  },
-  'Physical Phil': {
-    displayName: 'Maya',
-    photoURL: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=800',
-    bio: 'My humor style is "uncomfortable silence followed by a weird noise." Catch me at a local improv show or staring at a wall.',
-    age: 29
-  },
-  'Absurd Amy': {
-    displayName: 'Julian',
-    photoURL: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=800',
-    bio: 'If you don\'t like dry sarcasm, we probably won\'t get along. If you do, I\'ll still pretend we don\'t.',
-    age: 34
-  },
-  'Self-Dep Sam': {
-    displayName: 'Zara',
-    photoURL: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800',
-    bio: 'I once laughed at a floating piece of bread for ten minutes. Looking for someone with equally low standards for entertainment.',
-    age: 26
-  },
-  'Combo Carl': {
-    displayName: 'Theo',
+  'Slapstick Sam': {
     photoURL: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800',
     bio: 'I\'m the guy who trips over flat surfaces just to see if anyone is watching. High energy, low coordination.',
     age: 31
   },
-  'Neutral Nancy': {
+  'Dan': {
+    displayName: 'Dan',
+    photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800',
+    bio: 'Life is a joke and I\'m the punchline. Let\'s go get tacos and judge people silently.',
+    age: 28
+  },
+  'Marcus': {
+    photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800',
+    bio: 'Professional pun enthusiast. I have a Ph.D. in sarcasm. Let\'s trade bad jokes.',
+    age: 30
+  },
+  'Fake Nameington': {
     displayName: 'Elena',
     photoURL: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&q=80&w=800',
     bio: 'Sophisticated wit, but also I find the word "pantaloon" hilarious. It\'s a balance.',
     age: 38
   },
-  'Extreme Ed': {
-    displayName: 'Kai',
-    photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800',
-    bio: 'Life is a joke and I\'m the punchline. Let\'s go get tacos and judge people silently.',
-    age: 28
+  'Random Ryan': {
+    displayName: 'Theo',
+    photoURL: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=800',
+    bio: 'If you don\'t like dry sarcasm, we probably won\'t get along. If you do, I\'ll still pretend we don\'t.',
+    age: 34
   },
-  'Diverse Deb': {
-    displayName: 'Sloane',
+  'spudz': {
+    photoURL: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&q=80&w=800',
+    bio: 'I\'m just here for the memes. If your camera roll is 90% screenshots of weird tweets, swipe right.',
+    age: 25
+  },
+  'Luna': {
+    photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800',
+    bio: 'Dark humor is my love language. If you can make me laugh until I feel slightly guilty, we\'ll get along.',
+    age: 24
+  },
+  'Self-Deprecating Sara': {
+    displayName: 'Mila',
+    photoURL: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800',
+    bio: 'Loud laughs and questionable life choices. Let\'s make a scene.',
+    age: 30
+  },
+  'Classic Claire': {
+    displayName: 'Maya',
+    photoURL: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=800',
+    bio: 'My humor style is "uncomfortable silence followed by a weird noise." Catch me at a local improv show or staring at a wall.',
+    age: 29
+  },
+  'Pun Master Paula': {
+    displayName: 'Zara',
+    photoURL: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800',
+    bio: 'I once laughed at a floating piece of bread for ten minutes. Looking for someone with equally low standards for entertainment.',
+    age: 26
+  },
+  'Absurd Alex': {
+    displayName: 'Riley',
     photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800',
     bio: 'My favorite humor is when things go slightly wrong in a very specific way. Absolute chaos enthusiast.',
     age: 32
+  },
+  'Edgy Eddie': {
+    displayName: 'Dante',
+    photoURL: 'https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?auto=format&fit=crop&q=80&w=800',
+    bio: 'Deadpan delivery is my specialty. You won\'t know if I\'m joking or if I actually need a ride to the airport.',
+    age: 36
+  },
+  'Balanced Ben': {
+    displayName: 'Leo',
+    photoURL: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&q=80&w=800',
+    bio: 'Full-time architect, part-time pun generator. I have a structural weakness for bad jokes.',
+    age: 41
   }
 };
 
