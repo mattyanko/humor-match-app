@@ -202,13 +202,13 @@ ${this.customData.serverResponse}`:this.message=this._baseMessage}}var Ke;(funct
 
 All passwords will be "test123"
 
-Continue?`)){const{createBulkUsers:e}=await Xn(async()=>{const{createBulkUsers:t}=await import("./bulk-add-users-DqQrf1cL.js");return{createBulkUsers:t}},[]);await e()}}),document.getElementById("bulkCreateBtn").insertAdjacentHTML("afterend",`
+Continue?`)){const{createBulkUsers:e}=await Xn(async()=>{const{createBulkUsers:t}=await import("./bulk-add-users-CSkSZW0N.js");return{createBulkUsers:t}},[]);await e()}}),document.getElementById("bulkCreateBtn").insertAdjacentHTML("afterend",`
     <button id="bulkUpdatePhotos" class="secondary-btn" style="margin-top: 10px;">
       Update User Photos 📸
     </button>
   `),document.getElementById("bulkUpdatePhotos").addEventListener("click",async()=>{if(confirm(`This will update all existing users with photos and bios.
 
-Continue?`)){const{updateUserPhotos:e}=await Xn(async()=>{const{updateUserPhotos:t}=await import("./update-user-photos-4e0P1-FS.js");return{updateUserPhotos:t}},[]);await e()}})}function Jv(n,e){document.querySelector("#app").innerHTML=`
+Continue?`)){const{updateUserPhotos:e}=await Xn(async()=>{const{updateUserPhotos:t}=await import("./update-user-photos-CZkaWxHc.js");return{updateUserPhotos:t}},[]);await e()}})}function Jv(n,e){document.querySelector("#app").innerHTML=`
     <div>
       <h1>Humor Match 🎭</h1>
       <div id="profile-section" style="text-align: center;">
@@ -228,9 +228,9 @@ Continue?`)){const{updateUserPhotos:e}=await Xn(async()=>{const{updateUserPhotos
         <button id="logoutBtn">Log Out</button>
       </div>
     </div>
-  `,document.getElementById("retakeSurvey").addEventListener("click",()=>{yd()}),document.getElementById("findMatches").addEventListener("click",async()=>{const{showMatches:t}=await Xn(async()=>{const{showMatches:r}=await import("./matches-BTeVUFld.js");return{showMatches:r}},[]);t(e)}),document.getElementById("updatePhotosBtn").addEventListener("click",async()=>{if(confirm(`This will update all existing users with photos and bios.
+  `,document.getElementById("retakeSurvey").addEventListener("click",()=>{yd()}),document.getElementById("findMatches").addEventListener("click",async()=>{const{showMatches:t}=await Xn(async()=>{const{showMatches:r}=await import("./matches-Q3O1YS_c.js");return{showMatches:r}},[]);t(e)}),document.getElementById("updatePhotosBtn").addEventListener("click",async()=>{if(confirm(`This will update all existing users with photos and bios.
 
-Continue?`)){const{updateUserPhotos:r}=await Xn(async()=>{const{updateUserPhotos:s}=await import("./update-user-photos-4e0P1-FS.js");return{updateUserPhotos:s}},[]);await r()}}),document.getElementById("logoutBtn").addEventListener("click",async()=>{await jm(fr)}),document.getElementById("listUsersBtn").addEventListener("click",async()=>{const{collection:t,getDocs:r}=await Xn(async()=>{const{collection:u,getDocs:h}=await Promise.resolve().then(()=>Ev);return{collection:u,getDocs:h}},void 0),s=t(Xs,"users"),o=await r(s);let a=`Current Users:
+Continue?`)){const{updateUserPhotos:r}=await Xn(async()=>{const{updateUserPhotos:s}=await import("./update-user-photos-CZkaWxHc.js");return{updateUserPhotos:s}},[]);await r()}}),document.getElementById("logoutBtn").addEventListener("click",async()=>{await jm(fr)}),document.getElementById("listUsersBtn").addEventListener("click",async()=>{const{collection:t,getDocs:r}=await Xn(async()=>{const{collection:u,getDocs:h}=await Promise.resolve().then(()=>Ev);return{collection:u,getDocs:h}},void 0),s=t(Xs,"users"),o=await r(s);let a=`Current Users:
 
 `;o.forEach(u=>{const h=u.data();a+=`• ${h.displayName} (${h.userId})
 `}),alert(a)})}Bm(fr,async n=>{if(n){console.log("User logged in:",n.email);const t=(await pd(Ws(Xs,"users",n.uid))).data();t&&t.isProfileComplete?Jv(n,t):yd()}else console.log("No user logged in"),Yv()});export{fr as a,Xs as b,Om as c,Ws as d,jm as e,ev as f,gv as g,_v as h,dv as q,Yo as s,xm as u,fv as w};
