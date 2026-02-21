@@ -68,7 +68,7 @@ export function showSurvey() {
             <div class="emoji-large">🤪</div>
             <div class="header-text">
               <div class="title-blue">Physical Humor</div>
-              <div class="example-text">Slapstick, silly faces, pranks, funny videos</div>
+              <div class="example-text">Slapstick, silly faces, pranks</div>
             </div>
           </div>
           <div class="slider-labels-blue">

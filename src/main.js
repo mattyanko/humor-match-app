@@ -108,6 +108,26 @@ function showAuthScreen() {
       await createBulkUsers();
     }
   });
+
+
+  // Bulk Update Photos Button
+  document.getElementById('bulkCreateBtn').insertAdjacentHTML('afterend', `
+    <button id="bulkUpdatePhotos" class="secondary-btn" style="margin-top: 10px;">
+      Update User Photos 📸
+    </button>
+  `);
+
+  document.getElementById('bulkUpdatePhotos').addEventListener('click', async () => {
+    const confirmed = confirm(
+      'This will update all existing users with photos and bios.\n\n' +
+      'Continue?'
+    );
+    
+    if (confirmed) {
+      const { updateUserPhotos } = await import('./update-user-photos.js');
+      await updateUserPhotos();
+    }
+  });
 }
 
 function showWelcomeScreen(user, profileData) {
