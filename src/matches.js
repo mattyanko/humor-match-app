@@ -1,3 +1,4 @@
+import { escapeHTML } from './ui.js';
 // matches.js
 import { auth, db } from './firebase-config.js';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -46,9 +47,9 @@ export async function showMatches(currentUserData) {
   const app = document.querySelector('#app');
   
   app.innerHTML = `
-    <div style="text-align: center; padding: 40px; background: #e3f2fd;">
-      <h1 style="color: #1565c0;">Finding Your Matches 🎭</h1>
-      <p style="color: #42a5f5;">Analyzing humor compatibility...</p>
+    <div class="state-screen">
+      <h1>Finding Your Matches 🎭</h1>
+      <p>Analyzing humor compatibility...</p>
     </div>
   `;
   
@@ -81,9 +82,9 @@ export async function showMatches(currentUserData) {
   } catch (error) {
     console.error('Error fetching matches:', error);
     app.innerHTML = `
-      <div style="text-align: center; padding: 40px;">
+      <div class="state-screen">
         <h1>Error Loading Matches</h1>
-        <p style="color: red;">${error.message}</p>
+        <p style="color: red;">${escapeHTML(error.message)}</p>
         <button id="backToProfile" class="primary-btn">Back to Profile</button>
       </div>
     `;
@@ -99,9 +100,9 @@ function displayMatches(matches, currentUserData) {
   
   if (matches.length === 0) {
     app.innerHTML = `
-      <div style="text-align: center; padding: 40px; background: #e3f2fd;">
-        <h1 style="color: #1565c0;">No Matches Yet 😢</h1>
-        <p style="color: #42a5f5;">Be the first! Invite your friends to join.</p>
+      <div class="state-screen">
+        <h1>No Matches Yet 😢</h1>
+        <p>Be the first! Invite your friends to join.</p>
         <button id="backToProfile" class="primary-btn">Back to Profile</button>
         <button id="logoutBtn" class="secondary-btn">Log Out</button>
       </div>
@@ -124,15 +125,15 @@ function displayMatches(matches, currentUserData) {
     const hasPhoto = photoURL && photoURL.length > 0;
     
     return `
-      <div class="image-match-card">
+      <div class="image-match-card" data-vibe="${topVibe.key}" data-score="${match.matchScore}">
         <!-- Image Section -->
         <div class="image-section">
           ${hasPhoto ? `
-            <img src="${photoURL}" alt="${match.displayName}" class="profile-image" />
+            <img src="${escapeHTML(/^https?:\/\//.test(photoURL) ? photoURL : "")}" alt="${escapeHTML(match.displayName)}" class="profile-image" />
           ` : `
             <div class="profile-image-placeholder">
-              <div class="placeholder-icon">📷</div>
-              <div class="placeholder-text">No Photo</div>
+              <div class="placeholder-icon">${escapeHTML((match.displayName || "?").slice(0,1).toUpperCase())}</div>
+              <div class="placeholder-text">A face to meet soon</div>
             </div>
           `}
           
@@ -152,30 +153,31 @@ function displayMatches(matches, currentUserData) {
           <!-- Name & Bio Overlay -->
           <div class="overlay-info">
             <div class="name-age">
-              <h2>${match.displayName}${match.age ? `, ${match.age}` : ''}</h2>
+              <h2>${escapeHTML(match.displayName)}${match.age ? `, ${escapeHTML(match.age)}` : ''}</h2>
             </div>
-            <p class="bio-text">${match.bio || 'No bio yet'}</p>
+            <p class="bio-text">${escapeHTML(match.bio || 'Still working on their opening line.')}</p>
           </div>
         </div>
         
+        <p class="match-reason">${compatibilityReason(match.humorScores, currentUserData.humorScores)}</p>
         <!-- Expand Button -->
-        <button class="expand-btn" data-user-id="${match.userId}">
+        <button class="expand-btn" aria-expanded="false" data-user-id="${escapeHTML(match.userId)}">
           <span class="expand-text">Humor Compatibility</span>
           <span class="expand-arrow">▼</span>
         </button>
         
         <!-- Hidden Breakdown -->
-        <div class="breakdown-section" id="breakdown-${match.userId}">
+        <div class="breakdown-section" id="breakdown-${escapeHTML(match.userId)}">
           ${createBreakdownHTML(match, currentUserData)}
         </div>
         
         <!-- Action Buttons -->
         <div class="image-actions">
-          <button class="btn-image-pass" data-user-id="${match.userId}">
+          <button class="btn-image-pass" data-user-id="${escapeHTML(match.userId)}">
             <span>✕</span>
             <span>Pass</span>
           </button>
-          <button class="btn-image-like" data-user-id="${match.userId}">
+          <button class="btn-image-like" data-user-id="${escapeHTML(match.userId)}">
             <span>❤️</span>
             <span>Like</span>
           </button>
@@ -187,12 +189,18 @@ function displayMatches(matches, currentUserData) {
   app.innerHTML = `
     <div class="image-feed">
       <div class="image-feed-header">
-        <h1>Your Matches 🔥</h1>
+        <div class="brand">humor match<span>✳</span></div><p class="eyebrow">SAME WAVELENGTH. BETTER PUNCHLINES.</p><h1>Meet your kind of funny.</h1>
         <p class="feed-count">${matches.length} potential ${matches.length === 1 ? 'match' : 'matches'} found</p>
       </div>
       
+      <div class="match-toolbar">
+        <label>Humor style <select id="vibeFilter"><option value="all">All styles</option><option value="witty">Witty</option><option value="dark">Dark</option><option value="physical">Physical</option><option value="absurdist">Absurdist</option><option value="selfDeprecating">Self-deprecating</option></select></label>
+        <label>Compatibility <select id="scoreFilter"><option value="0">All matches</option><option value="80">80% and up</option><option value="90">90% and up</option></select></label>
+        <span id="filterCount" class="feed-count" aria-live="polite"></span>
+      </div>
       <div class="image-cards-container">
         ${matchesHTML}
+        <p id="filterEmpty" class="match-empty" hidden>No matches with these filters. Try another humor style.</p>
       </div>
       
       <div class="feed-footer">
@@ -202,6 +210,20 @@ function displayMatches(matches, currentUserData) {
     </div>
   `;
   
+  function filterMatches() {
+    const vibe = document.getElementById('vibeFilter').value;
+    const score = Number(document.getElementById('scoreFilter').value);
+    let count = 0;
+    document.querySelectorAll('.image-match-card').forEach(card => {
+      card.hidden = (vibe !== 'all' && card.dataset.vibe !== vibe) || Number(card.dataset.score) < score;
+      if (!card.hidden) count++;
+    });
+    document.getElementById('filterCount').textContent = `${count} shown`;
+    document.getElementById('filterEmpty').hidden = count > 0;
+  }
+  document.getElementById('vibeFilter').addEventListener('change', filterMatches);
+  document.getElementById('scoreFilter').addEventListener('change', filterMatches);
+  filterMatches();
   // Add event listeners
   document.querySelectorAll('.expand-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -285,6 +307,7 @@ function toggleBreakdown(userId, button) {
   const breakdown = document.getElementById(`breakdown-${userId}`);
   const arrow = button.querySelector('.expand-arrow');
   const text = button.querySelector('.expand-text');
+  button.setAttribute('aria-expanded', String(!breakdown.classList.contains('expanded')));
   
   const isExpanded = breakdown.classList.contains('expanded');
   
@@ -309,4 +332,11 @@ function handlePass(button) {
   card.style.opacity = '0.5';
   card.style.pointerEvents = 'none';
   console.log('Passed on user');
+}
+
+function compatibilityReason(theirs, yours) {
+  const labels = { witty: 'clever comebacks', dark: 'dark humor', physical: 'slapstick', absurdist: 'the wonderfully weird', selfDeprecating: 'a little self-roasting' };
+  const keys = Object.keys(labels).sort((a, b) => Math.abs(theirs[a] - yours[a]) - Math.abs(theirs[b] - yours[b]) || (theirs[b] + yours[b]) - (theirs[a] + yours[a]));
+  const key = keys[0];
+  return theirs[key] >= 5 && yours[key] >= 5 ? `You both love ${labels[key]}. Instant icebreaker.` : `You’re closest on ${labels[key]}. Compare your humor below.`;
 }
