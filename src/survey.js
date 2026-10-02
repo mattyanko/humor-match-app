@@ -1,15 +1,21 @@
 // survey.js
 import { auth, db } from './firebase-config.js';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
-export function showSurvey() {
-  const app = document.querySelector('#app');
+export async function showSurvey() {
+  const user = auth.currentUser;
+  if (!user) return;
+  const app = document.querySelector("#app");
+  let existing = {};
+  try { existing = (await getDoc(doc(db, "users", user.uid))).data() || {}; } catch { /* Allow onboarding when the profile cannot be read. */ }
+  if (auth.currentUser?.uid !== user.uid) return;
+
   
   app.innerHTML = `
     <div class="survey-container-blue">
       <div class="survey-header-blue">
-        <h1>Complete Your Profile 🎭</h1>
-        <p class="survey-subtitle">Tap your rating for each humor type</p>
+        <div class="brand">humor match<span>✳</span></div><p class="eyebrow">LET’S FIND YOUR FUNNY</p><h1>What makes you laugh?</h1>
+        <p class="survey-subtitle">No wrong answers. Rate each style from 1 to 7 to find your people.</p><div class="survey-progress"><span id="surveyProgress" style="width:0%"></span></div><p id="surveyStatus" class="survey-status" aria-live="polite">0 of 5 styles rated</p>
       </div>
 
       <div class="survey-cards-blue">
@@ -28,13 +34,13 @@ export function showSurvey() {
             <span>Love it!</span>
           </div>
           <div class="dots-selector-blue" data-question="witty">
-            <div class="dot-option-blue" data-value="1">1</div>
-            <div class="dot-option-blue" data-value="2">2</div>
-            <div class="dot-option-blue" data-value="3">3</div>
-            <div class="dot-option-blue" data-value="4">4</div>
-            <div class="dot-option-blue" data-value="5">5</div>
-            <div class="dot-option-blue" data-value="6">6</div>
-            <div class="dot-option-blue" data-value="7">7</div>
+            <button type="button" class="dot-option-blue" data-value="1" aria-pressed="false">1</button>
+            <button type="button" class="dot-option-blue" data-value="2" aria-pressed="false">2</button>
+            <button type="button" class="dot-option-blue" data-value="3" aria-pressed="false">3</button>
+            <button type="button" class="dot-option-blue" data-value="4" aria-pressed="false">4</button>
+            <button type="button" class="dot-option-blue" data-value="5" aria-pressed="false">5</button>
+            <button type="button" class="dot-option-blue" data-value="6" aria-pressed="false">6</button>
+            <button type="button" class="dot-option-blue" data-value="7" aria-pressed="false">7</button>
           </div>
         </div>
 
@@ -52,13 +58,13 @@ export function showSurvey() {
             <span>Love it!</span>
           </div>
           <div class="dots-selector-blue" data-question="dark">
-            <div class="dot-option-blue" data-value="1">1</div>
-            <div class="dot-option-blue" data-value="2">2</div>
-            <div class="dot-option-blue" data-value="3">3</div>
-            <div class="dot-option-blue" data-value="4">4</div>
-            <div class="dot-option-blue" data-value="5">5</div>
-            <div class="dot-option-blue" data-value="6">6</div>
-            <div class="dot-option-blue" data-value="7">7</div>
+            <button type="button" class="dot-option-blue" data-value="1" aria-pressed="false">1</button>
+            <button type="button" class="dot-option-blue" data-value="2" aria-pressed="false">2</button>
+            <button type="button" class="dot-option-blue" data-value="3" aria-pressed="false">3</button>
+            <button type="button" class="dot-option-blue" data-value="4" aria-pressed="false">4</button>
+            <button type="button" class="dot-option-blue" data-value="5" aria-pressed="false">5</button>
+            <button type="button" class="dot-option-blue" data-value="6" aria-pressed="false">6</button>
+            <button type="button" class="dot-option-blue" data-value="7" aria-pressed="false">7</button>
           </div>
         </div>
 
@@ -76,13 +82,13 @@ export function showSurvey() {
             <span>Love it!</span>
           </div>
           <div class="dots-selector-blue" data-question="physical">
-            <div class="dot-option-blue" data-value="1">1</div>
-            <div class="dot-option-blue" data-value="2">2</div>
-            <div class="dot-option-blue" data-value="3">3</div>
-            <div class="dot-option-blue" data-value="4">4</div>
-            <div class="dot-option-blue" data-value="5">5</div>
-            <div class="dot-option-blue" data-value="6">6</div>
-            <div class="dot-option-blue" data-value="7">7</div>
+            <button type="button" class="dot-option-blue" data-value="1" aria-pressed="false">1</button>
+            <button type="button" class="dot-option-blue" data-value="2" aria-pressed="false">2</button>
+            <button type="button" class="dot-option-blue" data-value="3" aria-pressed="false">3</button>
+            <button type="button" class="dot-option-blue" data-value="4" aria-pressed="false">4</button>
+            <button type="button" class="dot-option-blue" data-value="5" aria-pressed="false">5</button>
+            <button type="button" class="dot-option-blue" data-value="6" aria-pressed="false">6</button>
+            <button type="button" class="dot-option-blue" data-value="7" aria-pressed="false">7</button>
           </div>
         </div>
 
@@ -100,13 +106,13 @@ export function showSurvey() {
             <span>Love it!</span>
           </div>
           <div class="dots-selector-blue" data-question="absurdist">
-            <div class="dot-option-blue" data-value="1">1</div>
-            <div class="dot-option-blue" data-value="2">2</div>
-            <div class="dot-option-blue" data-value="3">3</div>
-            <div class="dot-option-blue" data-value="4">4</div>
-            <div class="dot-option-blue" data-value="5">5</div>
-            <div class="dot-option-blue" data-value="6">6</div>
-            <div class="dot-option-blue" data-value="7">7</div>
+            <button type="button" class="dot-option-blue" data-value="1" aria-pressed="false">1</button>
+            <button type="button" class="dot-option-blue" data-value="2" aria-pressed="false">2</button>
+            <button type="button" class="dot-option-blue" data-value="3" aria-pressed="false">3</button>
+            <button type="button" class="dot-option-blue" data-value="4" aria-pressed="false">4</button>
+            <button type="button" class="dot-option-blue" data-value="5" aria-pressed="false">5</button>
+            <button type="button" class="dot-option-blue" data-value="6" aria-pressed="false">6</button>
+            <button type="button" class="dot-option-blue" data-value="7" aria-pressed="false">7</button>
           </div>
         </div>
 
@@ -124,13 +130,13 @@ export function showSurvey() {
             <span>Love it!</span>
           </div>
           <div class="dots-selector-blue" data-question="selfDeprecating">
-            <div class="dot-option-blue" data-value="1">1</div>
-            <div class="dot-option-blue" data-value="2">2</div>
-            <div class="dot-option-blue" data-value="3">3</div>
-            <div class="dot-option-blue" data-value="4">4</div>
-            <div class="dot-option-blue" data-value="5">5</div>
-            <div class="dot-option-blue" data-value="6">6</div>
-            <div class="dot-option-blue" data-value="7">7</div>
+            <button type="button" class="dot-option-blue" data-value="1" aria-pressed="false">1</button>
+            <button type="button" class="dot-option-blue" data-value="2" aria-pressed="false">2</button>
+            <button type="button" class="dot-option-blue" data-value="3" aria-pressed="false">3</button>
+            <button type="button" class="dot-option-blue" data-value="4" aria-pressed="false">4</button>
+            <button type="button" class="dot-option-blue" data-value="5" aria-pressed="false">5</button>
+            <button type="button" class="dot-option-blue" data-value="6" aria-pressed="false">6</button>
+            <button type="button" class="dot-option-blue" data-value="7" aria-pressed="false">7</button>
           </div>
         </div>
 
@@ -159,6 +165,29 @@ export function showSurvey() {
     selfDeprecating: 0
   };
 
+  bioInputPlaceholder();
+  function updateProgress() {
+    const count = Object.values(selections).filter(Boolean).length;
+    document.getElementById('surveyProgress').style.width = `${count / 5 * 100}%`;
+    document.getElementById('surveyStatus').textContent = `${count} of 5 styles rated`;
+  }
+  function bioInputPlaceholder() {
+    document.getElementById('bio').value = existing.bio || '';
+    document.getElementById('charCount').textContent = `${(existing.bio || '').length} / 500`;
+    document.querySelectorAll('.dots-selector-blue').forEach(selector => {
+      const key = selector.dataset.question;
+      selector.setAttribute('role', 'group');
+      selector.setAttribute('aria-label', `${key} humor rating`);
+      const value = existing.humorScores?.[key];
+      if (value >= 1 && value <= 7) {
+        selections[key] = value;
+        const button = selector.querySelector(`[data-value="${value}"]`);
+        button.classList.add('selected');
+        button.setAttribute('aria-pressed', 'true');
+      }
+    });
+    updateProgress();
+  }
   // Handle dot selection
   document.querySelectorAll('.dots-selector-blue').forEach(selector => {
     selector.addEventListener('click', (e) => {
@@ -174,8 +203,11 @@ export function showSurvey() {
       // Visual feedback
       selector.querySelectorAll('.dot-option-blue').forEach(d => {
         d.classList.remove('selected');
+        d.setAttribute('aria-pressed', 'false');
       });
       dot.classList.add('selected');
+      dot.setAttribute('aria-pressed', 'true');
+      updateProgress();
     });
   });
 
@@ -204,12 +236,14 @@ export function showSurvey() {
 
     const bio = bioInput.value.trim();
 
+    const submit = document.getElementById('submitSurvey');
+    submit.disabled = true;
+    submit.textContent = 'Saving your profile…';
     try {
       await setDoc(doc(db, 'users', user.uid), {
         userId: user.uid,
         displayName: user.displayName || 'Anonymous',
         bio: bio,
-        photoURL: '',
         humorScores: {
           witty: selections.witty,
           dark: selections.dark,
@@ -226,6 +260,8 @@ export function showSurvey() {
     } catch (error) {
       console.error('Survey error:', error);
       alert('Error saving profile: ' + error.message);
+      submit.disabled = false;
+      submit.textContent = 'Save profile';
     }
   });
 }

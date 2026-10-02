@@ -1,3 +1,4 @@
+import { escapeHTML } from './ui.js';
 import './style.css'
 import { auth, db } from './firebase-config.js';
 import { 
@@ -13,23 +14,17 @@ import { showSurvey } from './survey.js';
 function showAuthScreen() {
   document.querySelector('#app').innerHTML = `
     <div>
-      <h1>Humor Match 🎭</h1>
+      <div class="brand">humor match<span>✳</span></div>
       
       <div id="auth-section">
-        <h2>Sign Up / Log In</h2>
-        <input type="email" id="email" placeholder="Email" />
-        <input type="password" id="password" placeholder="Password" />
-        <input type="text" id="displayName" placeholder="Display Name (for signup)" />
+        <p class="eyebrow">GOOD CHEMISTRY STARTS WITH A LAUGH</p><h1>Find your kind<br>of funny.</h1><p class="intro">A little wit. A little weird. Meet people who laugh at the same things you do.</p><h2>Your next inside joke starts here</h2>
+        <input type="email" id="email" placeholder="Email" aria-label="Email" autocomplete="email" />
+        <input type="password" id="password" placeholder="Password" aria-label="Password" autocomplete="current-password" />
+        <input type="text" id="displayName" placeholder="Your name (for signup)" aria-label="Your name" autocomplete="nickname" />
         <br>
         <button id="signupBtn">Sign Up</button>
         <button id="loginBtn">Log In</button>
         
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #dadce0;">
-        
-        <div style="text-align: center;">
-          <p style="color: #5f6368; font-size: 14px;">Testing? Create 10 users instantly:</p>
-          <button id="bulkCreateBtn" class="secondary-btn">Create Test Users 🤖</button>
-        </div>
       </div>
     </div>
   `;
@@ -95,49 +90,17 @@ function showAuthScreen() {
     }
   });
 
-  // Bulk Create Test Users
-  document.getElementById('bulkCreateBtn').addEventListener('click', async () => {
-    const confirmed = confirm(
-      'This will create 10 test users with different humor profiles.\n\n' +
-      'All passwords will be "test123"\n\n' +
-      'Continue?'
-    );
-    
-    if (confirmed) {
-      const { createBulkUsers } = await import('./bulk-add-users.js');
-      await createBulkUsers();
-    }
-  });
 
-
-  // Bulk Update Photos Button
-  document.getElementById('bulkCreateBtn').insertAdjacentHTML('afterend', `
-    <button id="bulkUpdatePhotos" class="secondary-btn" style="margin-top: 10px;">
-      Update User Photos 📸
-    </button>
-  `);
-
-  document.getElementById('bulkUpdatePhotos').addEventListener('click', async () => {
-    const confirmed = confirm(
-      'This will update all existing users with photos and bios.\n\n' +
-      'Continue?'
-    );
-    
-    if (confirmed) {
-      const { updateUserPhotos } = await import('./update-user-photos.js');
-      await updateUserPhotos();
-    }
-  });
 }
 
 function showWelcomeScreen(user, profileData) {
   document.querySelector('#app').innerHTML = `
     <div>
-      <h1>Humor Match 🎭</h1>
+      <div class="brand">humor match<span>✳</span></div>
       <div id="profile-section" style="text-align: center;">
-        <h2>Welcome, ${user.displayName}! 👋</h2>
-        <p style="color: #5f6368;">Profile complete! Your humor scores:</p>
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <p class="eyebrow">YOUR HUMOR PROFILE</p><h1>Hey, ${escapeHTML(user.displayName || "you")}.</h1><p class="intro">There’s someone out there who gets your punchline.</p>
+        <h2>Your recipe for a good laugh</h2>
+        <div class="profile-scores">
           <p><strong>Witty:</strong> ${profileData.humorScores.witty}/7</p>
           <p><strong>Dark:</strong> ${profileData.humorScores.dark}/7</p>
           <p><strong>Physical:</strong> ${profileData.humorScores.physical}/7</p>
@@ -146,8 +109,6 @@ function showWelcomeScreen(user, profileData) {
         </div>
         <button id="findMatches" class="primary-btn">Find Matches 🎯</button>
         <button id="retakeSurvey">Edit Profile</button>
-        <button id="updatePhotosBtn" class="secondary-btn">Update User Photos 📸</button>
-        <button id="listUsersBtn" class="secondary-btn">List All Users 📋</button>
         <button id="logoutBtn">Log Out</button>
       </div>
     </div>
@@ -162,35 +123,11 @@ function showWelcomeScreen(user, profileData) {
     showMatches(profileData);
   });
 
-  document.getElementById('updatePhotosBtn').addEventListener('click', async () => {
-    const confirmed = confirm(
-      'This will update all existing users with photos and bios.\n\n' +
-      'Continue?'
-    );
-    
-    if (confirmed) {
-      const { updateUserPhotos } = await import('./update-user-photos.js');
-      await updateUserPhotos();
-    }
-  });
-
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await signOut(auth);
   });
 
-  document.getElementById('listUsersBtn').addEventListener('click', async () => {
-    const { collection, getDocs } = await import('firebase/firestore');
-    const usersRef = collection(db, 'users');
-    const snapshot = await getDocs(usersRef);
-    
-    let usersList = 'Current Users:\n\n';
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      usersList += `• ${data.displayName} (${data.userId})\n`;
-    });
-    
-    alert(usersList);
-  });
+
 }
 
 // Auth State Listener - Main Router
